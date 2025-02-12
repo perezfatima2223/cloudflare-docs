@@ -14,7 +14,7 @@ Pipelines support ingesting data via HTTP. When you create a new Pipeline, you'l
 
 
 ```sh
-$ npx wrangler pipelines create [PIPELINE-NAME] --r2 [R2-BUCKET-NAME] --access-key-id [ACCESS-KEY-ID] --secret-access-key [SECRET-ACCESS-KEY]
+$ npx wrangler pipelines create [PIPELINE-NAME] --r2-bucket [R2-BUCKET-NAME]
 
 🌀 Creating pipeline named "[PIPELINE-NAME]"
 ✅ Successfully created pipeline [PIPELINE-NAME] with ID [PIPELINE-ID]
@@ -27,7 +27,7 @@ You can now send data to your pipeline with:
 By default, ingestion via HTTP is turned on for all Pipelines. You can turn it off by setting `--http false` when creating or updating a Pipeline.
 
 ```sh
-$ npx wrangler pipelines create [PIPELINE-NAME] --r2 [R2-BUCKET-NAME] --access-key-id [ACCESS-KEY-ID] --secret-access-key [SECRET-ACCESS-KEY] --http false
+$ npx wrangler pipelines create [PIPELINE-NAME] --r2-bucket [R2-BUCKET-NAME] --enable-http false
 ```
 
 Ingestion URLs are tied to your Pipeline ID. Turning HTTP off, and then turning it back on, will not change the URL.
@@ -35,8 +35,8 @@ Ingestion URLs are tied to your Pipeline ID. Turning HTTP off, and then turning 
 ## Authentication
 You can secure your HTTP ingestion endpoint using Cloudflare API tokens. By default, authentication is turned off. To enable authentication, use `--authentication true` while creating or updating a Pipeline.
 
-```
-$ npx wrangler pipelines create [PIPELINE-NAME] --r2 [R2-BUCKET-NAME] --access-key-id [ACCESS-KEY-ID] --secret-access-key [SECRET-ACCESS-KEY] --authentication true
+```sh
+$ npx wrangler pipelines create [PIPELINE-NAME] --r2-bucket [R2-BUCKET-NAME] --require-http-auth true
 ```
 
 Once authentication is turned on, you will need to include a Cloudflare API token in your request headers.

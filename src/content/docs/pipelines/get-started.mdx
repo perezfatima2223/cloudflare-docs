@@ -43,14 +43,14 @@ To create a Pipeline using Wrangler, run the following command in a terminal, an
 - The name of the R2 bucket you created in step 1
 
 ```sh
-npx wrangler pipelines create [PIPELINE-NAME] --r2 [R2-BUCKET-NAME]
+npx wrangler pipelines create [PIPELINE-NAME] --r2-bucket [R2-BUCKET-NAME] --batch-max-seconds 5 --compression none
 ```
 
 After running this command, you'll be prompted to authorize Cloudflare Workers Pipelines to create R2 API tokens on your behalf. These tokens are required by your Pipeline. Your Pipeline uses the tokens when loading data into your bucket. You can approve the request through the browser link which will open automatically.
 
 If you prefer not to authenticate this way, you may pass your [R2 API Tokens](/r2/api/s3/tokens/) to Wrangler:
 ```sh
-npx wrangler pipelines create [PIPELINE-NAME] --r2 [R2-BUCKET-NAME] --access-key-id [ACCESS-KEY-ID] --secret-access-key [SECRET-ACCESS-KEY]
+npx wrangler pipelines create [PIPELINE-NAME] --r2 [R2-BUCKET-NAME] --r2-access-key-id [ACCESS-KEY-ID] --r2-secret-access-key [SECRET-ACCESS-KEY]
 ```
 
 When choosing a name for your Pipeline:
@@ -60,6 +60,8 @@ When choosing a name for your Pipeline:
 3. The name cannot contain special characters outside dashes (`-`).
 4. The name must start and end with a letter or a number.
 
+You'll notice that we have set two optional flags while creating the pipeline: `--batch-max-seconds` and `--compression`. We've added these flags to make it faster for you to see the output of your first Pipeline. For production use cases, we recommend keeping the default settings.
+
 Once you create your Pipeline, you will receive a HTTP endpoint which you can post data to. You should see output as shown below:
 
 ```sh output
@@ -68,7 +70,7 @@ Once you create your Pipeline, you will receive a HTTP endpoint which you can po
 ✅ Successfully created pipeline [PIPELINE-NAME] with ID [PIPELINE-ID]
 
 You can now send data to your pipeline with:
-  curl "https://<PIPELINE-ID>.pipelines.cloudflare.com/" -d '[{ ...JSON_DATA... }]'
+  curl "https://<PIPELINE-ID>.pipelines.cloudflare.com/" -d '[{ "foo":"bar }]'
 ```
 
 ## 3. Post data to your pipeline
@@ -87,7 +89,7 @@ Pipelines handle batching the data, so you can continue posting data to the Pipe
 
 ## 4. Verify in R2
 
-Go to the R2 bucket you created in step 1 via [the Cloudflare dashboard](https://dash.cloudflare.com/). You should see a prefix for today's date. Click through, and you will see a file created containing the JSON data you posted in step 3.
+Go to the R2 bucket you created in step 1 via [the Cloudflare dashboard](https://dash.cloudflare.com/). You should see a prefix for today's date. Click through, and you will see a file created containing the JSON data you posted in step 3. You will be able to preview the file, and verify that the data you posted in step 2 is present in the file.
 
 ## Summary
 
