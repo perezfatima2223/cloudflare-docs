@@ -86,10 +86,6 @@ const difficulties = {
 
 			const difficulty = tutorial.data.difficulty;
 
-			if (!difficulty) {
-				throw new Error(`${tutorial.id} is missing difficulty property`);
-			}
-
 			const YOUTUBE_DOMAINS = ["www.youtube.com", "youtube.com", "youtu.be"];
 			const youtube =
 				tutorial.collection === "videos" &&
@@ -98,12 +94,14 @@ const difficulties = {
 			const spotlight =
 				tutorial.collection === "docs" && tutorial.data.spotlight;
 
-			const badges: BadgeType[] = [
-				{
+			const badges: BadgeType[] = [];
+
+			if (difficulty) {
+				badges.push({
 					text: difficulty,
 					variant: difficulties[difficulty],
-				},
-			];
+				});
+			}
 
 			if (youtube) {
 				badges.push({
