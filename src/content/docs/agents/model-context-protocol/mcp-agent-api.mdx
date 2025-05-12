@@ -12,6 +12,7 @@ When you build MCP Servers on Cloudflare, you extend the [`McpAgent` class](http
 <TypeScriptExample>
 
 ```ts title="src/index.ts"
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { McpAgent } from "agents/mcp";
 
 export class MyMCP extends McpAgent {
