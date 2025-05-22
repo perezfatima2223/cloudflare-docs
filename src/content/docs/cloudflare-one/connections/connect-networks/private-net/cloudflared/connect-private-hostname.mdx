@@ -29,9 +29,13 @@ Figures 1 and 2 illustrate the flow of DNS and network traffic when a user conne
 2. Based on the configured resolver policies, Gateway determines that `wiki.internal.local` should be resolved by a custom DNS resolver. Therefore, Gateway sends the DNS request down Cloudflare Tunnel to the private network where the custom DNS resolver is located.
 3. `cloudflared` does a DNS lookup to figure out what the origin IP is for `wiki.internal.local`.
 4. The Gateway resolver now knows that the origin IP is `10.0.0.5`.
-5. Rather than responding to the DNS query with the actual origin IP, Gateway responds with a random IP address from the CGNAT range `100.80.0.0/16` (for example, `100.80.0.1`). This CGNAT IP is called the initial resolved IP.
-6. Gateway's network engine stores the mapping between the private hostname, initial resolved IP, and the actual IP.
-7. The WARP client receives the initial resolved IP (`100.80.0.1`) in the DNS response for `wiki.internal.local`.
+5. Rather than responding to the DNS query with the actual origin IP, Gateway responds with a random IP address from the following CGNAT range:
+	- **IPv4**: `100.80.0.0/16`
+	- **IPv6**: `2606:4700:0cf1:4000::/64`
+
+	The selected CGNAT IP is called the initial resolved IP.
+6. Gateway's network engine stores the mapping between the private hostname (`wiki.internal.local`), initial resolved IP (`100.80.0.1`), and the actual IP (`10.0.0.5`).
+7. The WARP client receives the initial resolved IP (`100.80.0.1`) in the DNS response.
 
 As shown in Figure 2 below, the WARP client will now send `wiki.internal.local` traffic to the initial resolved IP. The initial resolved IP mechanism is required because Gateway's network engine operates at L3/L4 and can only see IPs (not hostnames) when processing the connection. Because the packet's destination IP falls within the designated CGNAT range, Gateway knows that it corresponds to a hostname route and can apply hostname-based policies. Traffic that passes your Gateway policies will route through Cloudflare Tunnel to the application's actual origin IP.
 
@@ -43,7 +47,7 @@ To learn more about hostname routing, refer to the [Cloudflare blog]().
 
 This section covers how to enable remote access to a private hostname application using `cloudflared` and WARP.
 
-### 1. Connect the server to Cloudflare
+### 1. Connect the application to Cloudflare
 
 <Render file="tunnel/create-tunnel"/>
 
@@ -59,7 +63,23 @@ This section covers how to enable remote access to a private hostname applicatio
 
 10. Select **Complete setup**.
 
-### 2. Set up the client
+### 2. Connect the DNS server to Cloudflare
+
+Route the IP address of your internal DNS resolver through the tunnel.
+
+### 3. Create a resolver policy
+
+1. [Create a Gateway resolver policy](cloudflare-one/policies/gateway/resolver-policies/#create-a-resolver-policy) that matches the following traffic:
+
+   | Selector | Operator | Value                  |
+   | -------- | -------- | ---------------------- |
+   | Host     | in       | `wiki.internal.local`  |
+
+2. Under **Configure custom DNS resolvers**, enter the IPv4 and/or IPv6 address of your internal DNS resolver. The dropdown menu will not populate until you type in the full IP address.
+
+3. From the dropdown menu, select the `- Private` routing option and the [virtual network](/cloudflare-one/connections/connect-networks/private-net/cloudflared/tunnel-virtual-networks/) where the DNS resolver is located.
+
+### 4. Set up the client
 
 <Details header="Feature availability">
 
@@ -80,15 +100,13 @@ This section covers how to enable remote access to a private hostname applicatio
 
 <Render file="tunnel/warp-to-tunnel-client" />
 
-### 3. Route private network IPs through WARP
+### 5. Route private network IPs through WARP
 
 - Initial resolved IP CGNAT range: `100.80.0.0/16`
 - Private network CIDR where the application is located, e.g. `10.0.0.0/8`. (Still need to know the IP range of the network. Do not need to know the specific IP of the application)
 - Internal DNS resolver IP
 
-### 4. Create a resolver policy
-
-### 5. (Recommended) Filter network traffic with Gateway
+### 6. (Recommended) Filter network traffic with Gateway
 
 #### Enable Gateway proxy for TCP and UDP
 #### Zero Trust policies
@@ -102,7 +120,7 @@ Option 2: create a Gateway network policy using the SNI selector https://develop
 Self-hosted private apps and Gateway network policies are not currently supported for services on non-443 ports. You can only create a Gateway DNS policy.
 
 
-### 6. Connect as a user
+### 7. Connect as a user
 
 
 
