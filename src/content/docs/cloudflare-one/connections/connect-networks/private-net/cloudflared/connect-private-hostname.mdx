@@ -66,12 +66,21 @@ This section covers how to enable remote access to a private hostname applicatio
 
 ### 2. Connect the DNS server to Cloudflare
 
---------to do------
-Route the IP address of your internal DNS resolver through the tunnel.
+To route your internal DNS resolver through Cloudflare Tunnel:
+
+1. Go to **Networks** > **Routes**.
+
+2. Select **Create route**.
+
+3. In **CIDR**, enter the private IP address of your internal DNS resolver.
+
+4. For **Tunnel**, select the Cloudflare Tunnel that is being used to connect the private network to Cloudflare.
+
+5. Select **Create**.
 
 ### 3. Create a resolver policy
 
-To resolve the private hostname through Cloudflare:
+Configure Gateway to resolve the private hostname using your internal DNS resolver:
 
 1. [Create a Gateway resolver policy](cloudflare-one/policies/gateway/resolver-policies/#create-a-resolver-policy) that matches the following traffic:
 
@@ -104,17 +113,19 @@ To resolve the private hostname through Cloudflare:
 
 <Render file="tunnel/warp-to-tunnel-client" />
 
-### 5. Route private network IPs through WARP
+### 5. Route traffic through WARP
 
---------to do------
+In your [device profiles]((/cloudflare-one/connections/connect-devices/warp/configure-warp/device-profiles/)), [configure Split Tunnels](cloudflare-one/connections/connect-devices/warp/configure-warp/route-traffic/split-tunnels/) so that the following IPs route through the WARP tunnel:
 
 - Initial resolved IP CGNAT range: `100.80.0.0/16`
-- Private network CIDR where the application is located, e.g. `10.0.0.0/8`. (Still need to know the IP range of the network. Do not need to know the specific IP of the application)
+- Private network CIDR where the application is located (for example, `10.0.0.0/8`)
 - Internal DNS resolver IP
+
+For more details on configuring Split Tunnels, refer to [Route private network IPs through WARP]().
 
 ### 6. (Recommended) Filter network traffic with Gateway
 
---------to do------
+<Render file="tunnel/filter-network-traffic" />
 
 #### Enable Gateway proxy
 
@@ -122,16 +133,21 @@ To resolve the private hostname through Cloudflare:
 
 #### Zero Trust policies
 
---------to do------
+<Render file="tunnel/catch-all-policy" />
 
-If you're running a private app on port 443:
+##### HTTPS applications
 
-Option 1: create an Access self-hosted private app https://developers.cloudflare.com/cloudflare-one/applications/non-http/self-hosted-private-app/
+If your private hostname points to an HTTPS application on port 443, you can secure it using either Access or Gateway policies:
 
-Option 2: create a Gateway network policy using the SNI selector https://developers.cloudflare.com/cloudflare-one/policies/gateway/network-policies/#sni
+	- Option 1 (Recommended): Create an [Access self-hosted private app](/cloudflare-one/applications/non-http/self-hosted-private-app/) to manage user access alongside your SaaS and other web apps.
 
-Self-hosted private apps and Gateway network policies are not currently supported for services on non-443 ports. You can only create a Gateway DNS policy.
+	- Option 2: If you prefer to secure a private network using a traditional firewall model, build Gateway network and DNS policies using the [SNI](/cloudflare-one/policies/gateway/network-policies/#sni) or [SNI Domain](/cloudflare-one/policies/gateway/network-policies/#sni-domain) selector. For more information on building Gateway policies, refer to [Secure your first application](/learning-paths/replace-vpn/build-policies/create-policy/) and [Common network policies](/cloudflare-one/policies/gateway/network-policies/common-policies/#restrict-access-to-private-networks).
 
+##### Non-HTTPS applications
+
+Access policies and Gateway network policies only support hostname-based filtering for applications on port 443. If your application runs on a non-443 port, you will need to allow or block network traffic using the [Destination IP](/cloudflare-one/policies/gateway/network-policies/#destination-ip) selector. Then, add a Gateway DNS policy to allow or block the [Host](/cloudflare-one/policies/gateway/dns-policies/#host) or [Domain](/cloudflare-one/policies/gateway/dns-policies/#domain) from resolving.
+
+For more information on building Gateway policies, refer to [Secure your first application](/learning-paths/replace-vpn/build-policies/create-policy/) and [Common network policies](/cloudflare-one/policies/gateway/network-policies/common-policies/#restrict-access-to-private-networks).
 
 ### 7. Connect as a user
 

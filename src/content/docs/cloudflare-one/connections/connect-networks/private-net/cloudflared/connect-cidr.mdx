@@ -27,7 +27,7 @@ To connect your infrastructure with Cloudflare Tunnel:
 
 ## 4. (Recommended) Filter network traffic with Gateway
 
-By default, all WARP devices enrolled in your Zero Trust organization can connect to your private network through Cloudflare Tunnel. You can configure Gateway to inspect your network traffic and either block or allow access based on user identity and device posture.
+<Render file="tunnel/filter-network-traffic" />
 
 ### Enable the Gateway proxy
 
@@ -35,9 +35,11 @@ By default, all WARP devices enrolled in your Zero Trust organization can connec
 
 ### Zero Trust policies
 
-To prevent WARP users from accessing your entire private network, we recommend creating a [catch-all block policy](/learning-paths/replace-vpn/build-policies/create-policy/#catch-all-policy) for your private IP space. You can then layer on higher priority Allow policies which grant users access to specific applications or IPs.
+<Render file="tunnel/catch-all-policy" />
 
-If you have applications clearly defined by IPs or hostnames, we recommend [creating an Access application](/cloudflare-one/applications/non-http/self-hosted-private-app/) and managing user access alongside your SaaS and other web apps. Alternatively, if you prefer to secure a private network using a traditional firewall model, you can build Gateway [network and DNS policies](/learning-paths/replace-vpn/build-policies/) for IP ranges and domains.
+If you have applications clearly defined by IPs or hostnames, we recommend [creating an Access application](/cloudflare-one/applications/non-http/self-hosted-private-app/) and managing user access alongside your SaaS and other web apps. Alternatively, if you prefer to secure a private network using a traditional firewall model, you can build Gateway network and DNS policies for IP ranges and domains.
+
+For more information on building Gateway policies, refer to [Secure your first application](/learning-paths/replace-vpn/build-policies/create-policy/) and [Common network policies](/cloudflare-one/policies/gateway/network-policies/common-policies/#restrict-access-to-private-networks).
 
 ## 5. Connect as a user
 
