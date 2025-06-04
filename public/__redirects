@@ -406,6 +406,9 @@
 /ddos-protection/tcp-protection/rule-settings/ /ddos-protection/advanced-ddos-systems/rule-settings/ 301
 /ddos-protection/dns-protection/ /ddos-protection/advanced-ddos-systems/overview/advanced-dns-protection/ 301
 /ddos-protection/tcp-protection/api/ /ddos-protection/advanced-ddos-systems/api/ 301
+/ddos-protection/managed-rulesets/adjust-rules/ /ddos-protection/managed-rulesets/create-override/ 301
+/ddos-protection/managed-rulesets/adjust-rules/false-negative/ /ddos-protection/managed-rulesets/create-override/false-negative/ 301
+/ddos-protection/managed-rulesets/adjust-rules/false-positive/ /ddos-protection/managed-rulesets/create-override/false-positive/ 301
 
 # dns
 /dns/additional-options/cname-flattening/ /dns/cname-flattening/ 301
