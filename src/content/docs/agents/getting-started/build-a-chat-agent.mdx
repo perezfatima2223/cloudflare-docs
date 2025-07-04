@@ -1,9 +1,198 @@
 ---
-pcx_content_type: navigation
 title: Build a Chat Agent
-external_link: https://github.com/cloudflare/agents-starter
+pcx_content_type: tutorial
 sidebar:
   order: 3
 head: []
-description: A starter template for building AI-powered chat agents using Cloudflare's Agent platform, powered by the Agents SDK. This project provides a foundation for creating interactive chat experiences with AI, complete with a modern UI and tool integration capabilities.
+description: Build an AI-powered chat agent that maintains conversation context and provides intelligent responses using Cloudflare's Agent platform.
 ---
+
+import { TypeScriptExample } from "~/components";
+
+This tutorial walks you through building a chat agent that can hold conversations, remember context, and provide intelligent responses.
+
+> **Complete example**: See the full implementation in the [agents-starter repository](https://github.com/cloudflare/agents-starter) on GitHub.
+
+## What you'll build
+
+A chat agent that:
+- Maintains conversation history
+- Provides contextual responses
+- Handles different types of user queries
+- Remembers user preferences
+
+## Prerequisites
+
+- Node.js 18+ installed
+- Basic knowledge of JavaScript/TypeScript
+- Cloudflare account
+
+## Step 1: Set up the project
+
+```bash
+npm create cloudflare@latest chat-agent -- --template=cloudflare/agents-starter
+cd chat-agent
+npm install
+```
+
+## Step 2: Explore the chat agent
+
+The starter template includes a complete chat agent in `src/server.ts`. Let's examine the key parts:
+
+<TypeScriptExample>
+
+```ts
+import { AIChatAgent } from "agents";
+
+export class ChatAgent extends AIChatAgent {
+  async onChatMessage(messages, { tools, toolsRequestInProgress }) {
+    // Process any pending tool calls
+    const { messages: updatedMessages } = await this.processTool(
+      messages,
+      tools,
+      toolsRequestInProgress
+    );
+
+    // Generate streaming response
+    const stream = this.ai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: this.getSystemPrompt(),
+        },
+        ...updatedMessages,
+      ],
+      tools: this.getTools(),
+      stream: true,
+    });
+
+    return this.streamResponse(stream);
+  }
+
+  getSystemPrompt() {
+    return `You are a helpful AI assistant. You can help users with various tasks and answer questions.`;
+  }
+
+  getTools() {
+    // Tools are defined in src/tools.ts
+    return collectTools();
+  }
+}
+```
+
+</TypeScriptExample>
+
+## Step 3: Configure your environment
+
+The starter includes a `wrangler.jsonc` configuration. Add your OpenAI API key:
+
+```jsonc
+{
+  "compatibility_date": "2024-09-23",
+  "compatibility_flags": ["nodejs_compat"],
+  "vars": {
+    "OPENAI_API_KEY": "your-openai-api-key-here"
+  },
+  "define": {
+    "process.env.NODE_ENV": "\"production\""
+  }
+}
+```
+
+Or set it as an environment variable:
+
+```bash
+echo "OPENAI_API_KEY=your-key-here" > .env
+```
+
+## Step 4: Test the agent
+
+```bash
+npm run dev
+```
+
+Open your browser to `http://localhost:8787` and start chatting. The interface includes:
+
+- **Chat interface**: Send messages and receive streaming responses
+- **Tool integration**: The agent can execute tools with confirmation
+- **Dark/light mode**: Toggle themes in the UI
+- **Debug mode**: View detailed message processing
+
+## Step 5: Customize your agent
+
+### Add custom tools
+
+Create tools in `src/tools.ts`:
+
+```ts
+import { tool } from "agents";
+
+export const getWeather = tool({
+  description: "Get current weather for a location",
+  parameters: {
+    type: "object",
+    properties: {
+      location: {
+        type: "string",
+        description: "The city name",
+      },
+    },
+    required: ["location"],
+  },
+  execute: async ({ location }) => {
+    // Call weather API
+    return `The weather in ${location} is sunny and 72°F`;
+  },
+});
+```
+
+### Customize the system prompt
+
+```ts
+export class ChatAgent extends AIChatAgent {
+  getSystemPrompt() {
+    return `You are a helpful assistant specializing in software development.
+    You can help with coding questions, debugging, and best practices.
+    Always provide clear, actionable advice.`;
+  }
+}
+```
+
+### Add tool confirmation
+
+```ts
+export const sensitiveAction = tool({
+  description: "Perform a sensitive action",
+  parameters: { /* ... */ },
+  requiresConfirmation: true, // Requires user confirmation
+  execute: async (params) => {
+    // Execute after confirmation
+    return "Action completed successfully";
+  },
+});
+```
+
+## Step 6: Deploy
+
+```bash
+npm run deploy
+```
+
+Your chat agent is now live with streaming responses and tool integration!
+
+## Next steps
+
+- Add custom tools for your specific use case
+- Integrate with external APIs and databases
+- Customize the UI theme and components
+- Add user authentication and personalization
+- Set up monitoring and analytics
+
+## Troubleshooting
+
+**No responses**: Verify your OpenAI API key is set in `wrangler.jsonc` or as an environment variable.
+
+**Tool errors**: Check tool definitions in `src/tools.ts` and ensure required parameters are provided.
+
+**Build issues**: Run `npm install` and check that all dependencies are properly installed.
