@@ -1,6 +1,10 @@
 major_version: 2
 enable_date: "2023-05-17"
 languages:
+  - name: Bun
+    default: "1.1.33"
+    supported: "Any version"
+    environment_variable: "BUN_VERSION"
   - name: Go
     default: "1.21.0"
     supported: "Any version"
@@ -58,10 +62,6 @@ tools:
     default: "3.6.3"
     supported: "Any version"
     environment_variable: "YARN_VERSION"
-  - name: Bun
-    default: "1.1.33"
-    supported: "Any version"
-    environment_variable: "BUN_VERSION"
 build_environment:
   operating_system: "Ubuntu `22.04.2`"
   architecture: "x86_64"
