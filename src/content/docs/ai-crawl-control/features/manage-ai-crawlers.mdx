@@ -88,6 +88,8 @@ For more details on how this rule interacts with other Cloudflare settings, refe
 - **Summary:** You can block an AI crawler to completely stop the AI crawler from scraping your webpage.
 - **When to use:** Block AI crawlers when their behavior do not align with your content strategy, or violate your policies.
 - **Implementation:** From the **Actions** column, select **Block**.
+
+Note that you can configure the response that gets returned when blocking an AI crawler. Refer to [Configure block response](/ai-crawl-control/features/manage-ai-crawlers/#configure-block-response).
 </Example>
 
 <Example title="Charge for crawl (private beta)">
@@ -117,10 +119,52 @@ Note that you can still choose to [Enforce `robots.txt`](/ai-crawl-control/featu
 - **Summary:** You can block an AI crawler to completely stop the AI crawler from scraping your webpage.
 - **When to use:** Block AI crawlers when their behavior do not align with your content strategy, or violate your policies.
 - **Implementation:** From the **Actions** column, select **Block**.
+
+Note that you can configure the response that gets returned when blocking an AI crawler. Refer to [Configure block response](/ai-crawl-control/features/manage-ai-crawlers/#configure-block-response).
 </Example>
 
 </TabItem>
 </Tabs>
+
+## Configure block response
+
+When blocking an AI crawler, you can configure the details of the response that gets returned to the AI crawler. Specifically, you can configure:
+
+- The response code
+- The response body
+
+To edit these values:
+
+<Steps>
+1. Log in to the [Cloudflare dashboard](https://dash.cloudflare.com/), and select your account and domain.
+2. Go to **AI Crawl Control**.
+3. Go to the **Settings** tab.
+4. Under **Block response**, select **Edit**.
+5. Once you have edited the values, select **Save**.
+</Steps>
+
+### Edit the response code
+
+You can choose which HTTP response code to return when blocking an AI crawler.
+
+Use the dropdown menu to select the desired response code. You can choose from:
+
+  - **403 Forbidden**: Use this option if you wish to indicate that you do not want the AI crawler to access your content.
+  - **402 Payment Required:** Use this option if you wish to indicate that the AI crawler must pay to access your content.
+
+### Edit the response body
+
+You can write a custom message (HTTP response body) to return when blocking an AI crawler.
+
+In the **Response body** text field, enter the response you wish to display for the AI crawler in plain text.
+
+{/* Need guidance on what sort of information they should include */}
+
+:::note
+Behind the scenes, AI Crawl Control uses WAF to return custom block responses.
+
+Refer to [Configure a custom response for blocked requests](/waf/custom-rules/create-dashboard/#configure-a-custom-response-for-blocked-requests).
+:::
 
 ## Related resources
 
