@@ -149,8 +149,16 @@ You can choose which HTTP response code to return when blocking an AI crawler.
 
 Use the dropdown menu to select the desired response code. You can choose from:
 
-  - **403 Forbidden**: Use this option if you wish to indicate that you do not want the AI crawler to access your content.
-  - **402 Payment Required:** Use this option if you wish to indicate that the AI crawler must pay to access your content.
+  - `403 Forbidden`: Use this option if you wish to indicate that you do not want the AI crawler to access your content.
+  - `402 Payment Required`: Use this option if you wish to indicate that the AI crawler must pay to access your content.
+
+:::note
+Behind the scenes, AI Crawl Control uses [Cloudflare WAF](/waf/) to return custom block responses.
+
+If you have manually configured a WAF rule to return a response code other than `403` or `402`, AI Crawl Control will not be able to enforce the response code you have selected, and the dropdown will appear blank. Ensure you have selected either `403` or `402`.
+
+Refer to [Configure a custom response for blocked requests](/waf/custom-rules/create-dashboard/#configure-a-custom-response-for-blocked-requests) for more information.
+:::
 
 ### Edit the response body
 
@@ -159,12 +167,6 @@ You can write a custom message (HTTP response body) to return when blocking an A
 In the **Response body** text field, enter the response you wish to display for the AI crawler in plain text.
 
 {/* Need guidance on what sort of information they should include */}
-
-:::note
-Behind the scenes, AI Crawl Control uses WAF to return custom block responses.
-
-Refer to [Configure a custom response for blocked requests](/waf/custom-rules/create-dashboard/#configure-a-custom-response-for-blocked-requests).
-:::
 
 ## Related resources
 
