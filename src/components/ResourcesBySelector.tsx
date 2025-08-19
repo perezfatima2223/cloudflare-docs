@@ -127,7 +127,7 @@ export default function ResourcesBySelector({
 							)}
 							{showLastUpdated && (
 								<span className="line-clamp-3" title={page.data.description}>
-									Updated {timeAgo(page.data.updated)}
+									Updated {timeAgo(page.data.reviewed)}
 								</span>
 							)}
 						</a>
